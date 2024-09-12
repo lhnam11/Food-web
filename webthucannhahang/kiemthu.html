@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"/>
+  <title>Trang Đăng Nhập</title>
+  <style>
+    /* Thiết lập kiểu cho trang web */
+    #dong6c1 {
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+
+    /* Thiết lập kiểu cho form đăng nhập và đăng ký */
+    #login-form,
+    #register-form {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: #fff;
+      z-index: 9999;
+      width: 300px;
+      height: 450px;
+      text-align: justify;
+      line-height: 30px;
+      box-shadow: 0px 0px 5px gray;
+       background-size: cover;
+  background-position: center;
+    }
+
+    /* Thiết lập kiểu cho mờ nền */
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 9998;
+    }
+
+    /* Hiệu ứng đường kẻ cho input */
+    .input-container {
+      position: relative;
+    }
+
+    .animated-input {
+      font-size: 18px;
+      padding: 10px;
+      border: none;
+      outline: none;
+      width: 200px;
+      background-color: transparent;
+      color: black;
+    }
+
+    .input-border {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #A5C0DD;
+      transition: width 0.3s ease;
+    }
+
+    .animated-input:focus + .input-border {
+      width: 100%;
+    }
+    button {
+  padding: 1.3em 3em;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+  
+}
+
+button:hover {
+  background-color: #AEE2FF;
+  box-shadow: #E6FFFD;
+  color: #fff;
+  transform: translateY(-7px);
+}
+
+button:active {
+  transform: translateY(-1px);
+}
+  </style>
+</head>
+<body>
+  <!-- Form đăng nhập -->
+  <div id="login-form">
+    <h2 align="center">Đăng nhập</h2>
+    <form onsubmit="return validateLoginForm();">
+      <div class="input-container">
+        <input type="email" id="loginEmail" class="animated-input" placeholder="Gmail" required style="margin-left: 0px;width: 278px;">
+        <span class="input-border"></span>
+      </div><br/>
+      <div class="input-container">
+        <input type="password" id="loginPassword" class="animated-input" placeholder="Mật khẩu" required>
+        <span class="input-border"></span>
+      </div>
+      <span id="loginPasswordError" style="color: red; display: none;">Mật khẩu không hợp lệ</span><br/>
+      <button type="submit" style="margin-left: 60px;">Đăng nhập</button>
+    </form>
+    <p>Chưa có tài khoản? <a href="#" onclick="showRegisterForm(); return false;">Đăng ký</a></p>
+  </div>
+
+  <!-- Form đăng ký -->
+  <div id="register-form">
+    <h2 align="center">Đăng ký</h2>
+    <form onsubmit="return validateRegisterForm();">
+      <div class="input-container">
+        <input type="email" id="registerEmail" class="animated-input" placeholder="Gmail" required style="width: 278px;">
+        <span class="input-border"></span>
+      </div><br/>
+      <div class="input-container">
+        <input type="password" id="registerPassword" class="animated-input" placeholder="Mật khẩu" required>
+        <span class="input-border"></span>
+      </div><br/>
+      <div class="input-container">
+        <input type="password" id="confirmPassword" class="animated-input" placeholder="Nhập lại mật khẩu" required>
+        <span class="input-border"></span>
+      </div>
+      <span id="registerPasswordError" style="color: red; display: none;">Mật khẩu không hợp lệ</span><br/>
+      <button id="button1" type="submit"style="margin-left: 45px;">Tạo tài khoản</button>
+    </form>
+    <p>Đã có tài khoản? <a href="#" onclick="hideRegisterForm(); return false;">Đóng</a></p>
+  </div>
+  <textarea style="visibility: hidden;"> đăng ký tài khoản  thành công  </textarea>
+
+  <!-- Mờ nền -->
+  <div id="overlay"></div>
+
+  <script>
+    function showLoginForm() {
+      var loginForm = document.querySelector('#login-form');
+      var overlay = document.querySelector('#overlay');
+      loginForm.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+    function hideLoginForm() {
+      var loginForm = document.querySelector('#login-form');
+      var overlay = document.querySelector('#overlay');
+      loginForm.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+    function showRegisterForm() {
+      var registerForm = document.querySelector('#register-form');
+      var overlay = document.querySelector('#overlay');
+      registerForm.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+    function hideRegisterForm() {
+      var registerForm = document.querySelector('#register-form');
+      var overlay = document.querySelector('#overlay');
+      registerForm.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+    function validateLoginForm() {
+      var passwordInput = document.getElementById('loginPassword');
+      var passwordError = document.getElementById('loginPasswordError');
+      if (passwordInput.value.length < 3 || !isValidPassword(passwordInput.value)) {
+        passwordError.style.display = 'block';
+        return false;
+      }
+      passwordError.style.display = 'none';
+      return true;
+    }
+    function validateRegisterForm() {
+      var passwordInput = document.getElementById('registerPassword');
+      var confirmPasswordInput = document.getElementById('confirmPassword');
+      var passwordError = document.getElementById('registerPasswordError');
+      if (passwordInput.value.length < 3 || !isValidPassword(passwordInput.value)) {
+        passwordError.style.display = 'block';
+        return false;
+      }
+      if (passwordInput.value !== confirmPasswordInput.value) {
+        passwordError.innerText = 'Mật khẩu không khớp';
+        passwordError.style.display = 'block';
+        return false;
+      }
+      passwordError.style.display = 'none';
+      // Hiển thị trang đăng nhập
+      showLoginForm();
+      return true;
+    }
+    function isValidPassword(password) {
+      // Thực hiện kiểm tra các yêu cầu về mật khẩu tại đây
+      // Ví dụ: ít nhất 8 ký tự, có chữ hoa, chữ thường và số
+      // Trả về true nếu mật khẩu hợp lệ, ngược lại trả về false
+      return true;
+    }
+    window.addEventListener('DOMContentLoaded', function() {
+      showLoginForm(); // Hiển thị trang đăng nhập khi trang web đã tải xong
+    });
+    function validateLoginForm() {
+  var emailInput = document.getElementById('loginEmail').value;
+  var passwordInput = document.getElementById('loginPassword').value;
+  // Nếu đăng nhập thành công, chuyển hướng đến trang 
+  window.location.href = 'restaurant.html';
+  // Ngăn chặn gửi form và chuyển hướng trình duyệt
+  return false;
+}
+function validateLoginForm1() {
+  var emailInput = document.getElementById('#registerEmail').value;
+  var passwordInput = document.getElementById('#registerPassword').value;
+  var confirmIput =document.getElementById('#confirmPassword').value;
+  // Kiểm tra đăng nhập thành công ở đây
+  // Sử dụng điều kiện và xử lý tương ứng 
+  // Nếu đăng nhập thành công, chuyển hướng đến trang 
+  window.location.href = 'kiemthu.html';
+  // Ngăn chặn gửi form và chuyển hướng trình duyệt
+  return false;
+}
+let button1 = document.querySelector("#button1");
+    let text   =document.querySelector("textarea");
+    button1.addEventListener("click",()=>{
+        let utteramce = new
+        SpeechSynthesisUtterance(text.value);
+        speechSynthesis.speak(utteramce);
+    });
+  </script>
+</body>
+</html>
